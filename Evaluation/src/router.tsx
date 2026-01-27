@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import LandingPage from "./pages/LandingPage";
-import InfiniteListComponent from "./features/components/InfiniteListComponent";
+import BreedsPage from "./pages/BreedsPage";
 
 export const router = createBrowserRouter([
   {
@@ -9,6 +9,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "/breed",
-    element: <InfiniteListComponent />,
+    element: <BreedsPage />,
   },
 ]);
