@@ -28,7 +28,7 @@ export const useGetBreeds = ({
       .finally(() => {
         setIsLoading(false);
       });
-  }, [url]);
+  }, [url, page]);
 
   return { breeds, isLoading, error, total };
 };

@@ -2,8 +2,9 @@ import ListItem from "./ListItem";
 import type { Breed } from "../types/breeds";
 import Spinner from "@/components/common/Spinner";
 import { useEffect, useRef, useState } from "react";
-import { useGetBreeds } from "../hooks/useGetBreeds";
+// import { useGetBreeds } from "../hooks/useGetBreeds";
 import { BREEDS_URL } from "../constants";
+import { addPaginationToUrl } from "@/lib/addPaginationToUrl";
 
 // type InfiniteListProps = {
 //   items: Breed[];
@@ -11,26 +12,40 @@ import { BREEDS_URL } from "../constants";
 //   error: Error | null;
 // };
 export default function InfiniteList() {
-  // items,
-  // isLoading,
-  // error,
-  const size = "5";
+  const [breeds, setBreeds] = useState<Breed[]>([]);
+  const [total, setTotal] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null | boolean>(null);
+
+  const size = "30";
   const [page, setPage] = useState("1");
-  const {
-    breeds: items,
-    isLoading,
-    error,
-    total,
-  } = useGetBreeds({ url: BREEDS_URL, page, size });
-  const [dataToFetch, setDataToFetch] = useState(items);
+
+  // const {
+  //   breeds: items,
+  //   isLoading,
+  //   error,
+  //   total,
+  // } = useGetBreeds({ url: BREEDS_URL, page, size });
 
   const spinnerRef = useRef<HTMLDivElement>(null);
+  // const [accumulatedData, setAccumulativeData] = useState(items);
+  console.log(breeds, "items");
+  // console.log(accumulatedData, "accum data");
+
+  const [isSpinnerRefVisible, setIsSpinnerRefVisible] = useState(false);
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [hasMore, setHasMore] = useState(false);
-  useEffect(() => {
-    if (items.length > 0) {
-      setDataToFetch((prev) => {
-        const newData = [...prev, items];
+  const fetchBreeds = async () => {
+    try {
+      setIsLoading(true);
+      setError(false);
+      const paginatedUrl = addPaginationToUrl({ url: BREEDS_URL, page, size });
+      const resBreeds = await fetch(paginatedUrl);
+      const res = await resBreeds.json();
+      setTotal(res.meta.pagination.records);
+
+      setBreeds((prev) => {
+        const newData = [...prev, ...res.data];
         if (newData.length < total) {
           setHasMore(true);
         } else {
@@ -38,10 +53,47 @@ export default function InfiniteList() {
         }
         return newData;
       });
-    } else {
+    } catch {
+      setError(true);
+      setHasMore(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchBreeds();
+  }, [page]);
+  // useEffect(() => {
+
+  //     .catch((err) => {
+
+  //     })
+  //     .finally(() => {
+
+  //     });
+  // }, [page]);
+  // useEffect(() => {
+  //   if (items.length > 0) {
+  //     setDataToFetch((prev) => {
+  //       const newData = [...prev, items];
+  //       if (newData.length < total) {
+  //         setHasMore(true);
+  //       } else {
+  //         setHasMore(false);
+  //       }
+  //       return newData;
+  //     });
+  //   } else {
+  //     setHasMore(false);
+  //   }
+  // }, [page]);
+
+  useEffect(() => {
+    if (breeds.length < total) setHasMore(true);
+    else {
       setHasMore(false);
     }
-  }, [page]);
+  }, [breeds]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -60,18 +112,15 @@ export default function InfiniteList() {
     return () => {
       if (spinnerRef.current) observer.unobserve(spinnerRef.current);
     };
-  }, [spinnerRef]);
+  }, [isSpinnerRefVisible]);
   useEffect(() => {
-    if (isIntersecting) {
+    if (hasMore && isIntersecting) {
       setPage(String(Number(page) + 1));
-      useGetBreeds({ url: BREEDS_URL, page, size });
     }
   }, [isIntersecting]);
-  console.log(isIntersecting);
-  console.log("data to fetch ", dataToFetch);
   return (
     <div className="flex py-16 justify-between items-center flex-col my-auto">
-      {isLoading ? (
+      {isLoading && !hasMore ? (
         <Spinner />
       ) : error ? (
         <p>!error</p>
@@ -79,17 +128,25 @@ export default function InfiniteList() {
         <div>
           {
             <ul className=" flex justify-between items-center flex-col gap-1">
-              {dataToFetch.map((breed: Breed) => (
+              {breeds.map((breed: Breed) => (
                 <ListItem key={breed.id}>{breed.attributes?.name}</ListItem>
               ))}
             </ul>
           }
         </div>
       )}
-      {hasMore && (
-        <div ref={spinnerRef} className="mt-16">
+      {hasMore ? (
+        <div
+          ref={(el) => {
+            spinnerRef.current = el;
+            setIsSpinnerRefVisible((prev) => !prev);
+          }}
+          className="mt-16"
+        >
           <Spinner />
         </div>
+      ) : (
+        !isLoading && <div>no more data</div>
       )}
     </div>
   );
