@@ -2,98 +2,21 @@ import ListItem from "./ListItem";
 import type { Breed } from "../types/breeds";
 import Spinner from "@/components/common/Spinner";
 import { useEffect, useRef, useState } from "react";
-// import { useGetBreeds } from "../hooks/useGetBreeds";
-import { BREEDS_URL } from "../constants";
-import { addPaginationToUrl } from "@/lib/addPaginationToUrl";
 
-// type InfiniteListProps = {
-//   items: Breed[];
-//   isLoading: boolean;
-//   error: Error | null;
-// };
+import { useFetchBreeds } from "../services/useFetchBreeds";
+import NoMoreData from "./NoMoreData";
+
 export default function InfiniteList() {
-  const [breeds, setBreeds] = useState<Breed[]>([]);
-  const [total, setTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null | boolean>(null);
+  const [page, setPage] = useState(1);
 
-  const size = "30";
-  const [page, setPage] = useState("1");
-
-  // const {
-  //   breeds: items,
-  //   isLoading,
-  //   error,
-  //   total,
-  // } = useGetBreeds({ url: BREEDS_URL, page, size });
+  const { breeds, isLoading, error, hasMore } = useFetchBreeds({
+    page,
+  });
 
   const spinnerRef = useRef<HTMLDivElement>(null);
-  // const [accumulatedData, setAccumulativeData] = useState(items);
-  console.log(breeds, "items");
-  // console.log(accumulatedData, "accum data");
 
   const [isSpinnerRefVisible, setIsSpinnerRefVisible] = useState(false);
   const [isIntersecting, setIsIntersecting] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
-  const fetchBreeds = async () => {
-    try {
-      setIsLoading(true);
-      setError(false);
-      const paginatedUrl = addPaginationToUrl({ url: BREEDS_URL, page, size });
-      const resBreeds = await fetch(paginatedUrl);
-      const res = await resBreeds.json();
-      setTotal(res.meta.pagination.records);
-
-      setBreeds((prev) => {
-        const newData = [...prev, ...res.data];
-        if (newData.length < total) {
-          setHasMore(true);
-        } else {
-          setHasMore(false);
-        }
-        return newData;
-      });
-    } catch {
-      setError(true);
-      setHasMore(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchBreeds();
-  }, [page]);
-  // useEffect(() => {
-
-  //     .catch((err) => {
-
-  //     })
-  //     .finally(() => {
-
-  //     });
-  // }, [page]);
-  // useEffect(() => {
-  //   if (items.length > 0) {
-  //     setDataToFetch((prev) => {
-  //       const newData = [...prev, items];
-  //       if (newData.length < total) {
-  //         setHasMore(true);
-  //       } else {
-  //         setHasMore(false);
-  //       }
-  //       return newData;
-  //     });
-  //   } else {
-  //     setHasMore(false);
-  //   }
-  // }, [page]);
-
-  useEffect(() => {
-    if (breeds.length < total) setHasMore(true);
-    else {
-      setHasMore(false);
-    }
-  }, [breeds]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -115,13 +38,15 @@ export default function InfiniteList() {
   }, [isSpinnerRefVisible]);
   useEffect(() => {
     if (hasMore && isIntersecting) {
-      setPage(String(Number(page) + 1));
+      setPage((prev) => prev + 1);
     }
   }, [isIntersecting]);
   return (
     <div className="flex py-16 justify-between items-center flex-col my-auto">
       {isLoading && !hasMore ? (
-        <Spinner />
+        <div className="my-auto">
+          <Spinner loadingText="Loading initial data" />
+        </div>
       ) : error ? (
         <p>!error</p>
       ) : (
@@ -129,7 +54,7 @@ export default function InfiniteList() {
           {
             <ul className=" flex justify-between items-center flex-col gap-1">
               {breeds.map((breed: Breed) => (
-                <ListItem key={breed.id}>{breed.attributes?.name}</ListItem>
+                <ListItem key={breed.id} breed={breed} />
               ))}
             </ul>
           }
@@ -143,10 +68,10 @@ export default function InfiniteList() {
           }}
           className="mt-16"
         >
-          <Spinner />
+          <Spinner loadingText="loading more data" />
         </div>
       ) : (
-        !isLoading && <div>no more data</div>
+        !isLoading && <NoMoreData />
       )}
     </div>
   );
