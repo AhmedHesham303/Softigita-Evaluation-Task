@@ -6,7 +6,15 @@ import { useEffect, useRef, useState } from "react";
 import { useFetchBreeds } from "../services/useFetchBreeds";
 import NoMoreData from "./NoMoreData";
 
-export default function InfiniteList() {
+export default function InfiniteList({
+  threshold = 0,
+}: {
+  threshold?: number;
+}) {
+  if (threshold < 1) {
+    threshold = window.innerHeight * threshold;
+  }
+  console.log("threshold", threshold);
   const [page, setPage] = useState(1);
 
   const { breeds, isLoading, error, hasMore } = useFetchBreeds({
@@ -37,14 +45,15 @@ export default function InfiniteList() {
     };
   }, [isSpinnerRefVisible]);
   useEffect(() => {
-    if (hasMore && isIntersecting) {
+    if (hasMore && isIntersecting && !isLoading) {
+      // to prevent multiple calls
       setPage((prev) => prev + 1);
     }
   }, [isIntersecting]);
   return (
     <div className="flex py-16 justify-between items-center flex-col my-auto">
       {isLoading && !hasMore ? (
-        <div className="my-auto">
+        <div className="my-auto ">
           <Spinner loadingText="Loading initial data" />
         </div>
       ) : error ? (
@@ -66,8 +75,9 @@ export default function InfiniteList() {
             spinnerRef.current = el;
             setIsSpinnerRefVisible((prev) => !prev);
           }}
-          className="mt-16"
+          className="flex flex-col justify-center items-center "
         >
+          <div className={`w-2 h-[${threshold}px]`}></div>
           <Spinner loadingText="loading more data" />
         </div>
       ) : (
