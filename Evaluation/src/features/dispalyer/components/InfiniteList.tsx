@@ -1,16 +1,18 @@
-import ListItem from "./ListItem";
 import Spinner from "@/components/common/Spinner";
 import { useEffect, useRef, useState } from "react";
 
 import NoMoreData from "./NoMoreData";
+import { cn } from "@/lib/utils";
 type InfiniteListProps = {
   threshold?: number;
-  data: [];
   isLoading?: boolean;
   error?: Error | null;
   hasMore?: boolean;
   setPage: (page: number) => void;
-  children: React.JSX.Element;
+  className?: string;
+  outerClassName?: string;
+  innerClassName?: string;
+  elements: React.JSX.Element[];
 };
 export default function InfiniteList({
   threshold = 0,
@@ -18,7 +20,9 @@ export default function InfiniteList({
   error,
   hasMore = false,
   setPage = () => {},
-  children,
+  outerClassName,
+  className,
+  elements,
 }: InfiniteListProps) {
   if (threshold < 1) {
     threshold = window.innerHeight * threshold;
@@ -56,15 +60,20 @@ export default function InfiniteList({
     }
   }, [isIntersecting]);
   return (
-    <div className="flex py-16 justify-between items-center flex-col my-auto">
+    <div
+      className={cn(
+        "flex py-16 justify-between items-center flex-col my-auto",
+        outerClassName,
+      )}
+    >
       {isLoading && !hasMore ? (
         <div className="my-auto ">
           <Spinner loadingText="Loading initial data" />
         </div>
-      ) : error ? (
-        <p>!error</p>
+      ) : error?.message ? (
+        <div className="text-red-500">Error: {error.message}</div>
       ) : (
-        <div>{children}</div>
+        <ul className={cn("flex flex-col", className)}>{elements}</ul>
       )}
       {hasMore ? (
         <div

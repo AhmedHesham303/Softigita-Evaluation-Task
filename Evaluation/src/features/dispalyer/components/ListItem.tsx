@@ -1,19 +1,17 @@
-// import type { Breed } from "../types/breeds";
+import { cn } from "@/lib/utils";
 
-// interface ListItemProps {
-//   breed: Breed;
-// }
-
-export default function ListItem({
-  children,
-  key,
-}: {
+type ListItemProps = {
   children: React.JSX.Element;
   key: string | undefined;
-}) {
+  className?: string;
+};
+export default function ListItem({ children, key, className }: ListItemProps) {
   return (
     <li
-      className="w-full max-w-xl p-6  rounded-xl shadow-md flex flex-col gap-2 hover:shadow-lg transition-shadow duration-300"
+      className={cn(
+        "w-full max-w-xl p-6  rounded-xl shadow-md flex flex-col gap-2 ",
+        className,
+      )}
       key={key}
     >
       {children}

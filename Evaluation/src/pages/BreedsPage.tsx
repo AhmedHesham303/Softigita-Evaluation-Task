@@ -16,21 +16,20 @@ export default function BreedsPage() {
       error={error}
       hasMore={hasMore}
       setPage={setPage}
-    >
-      <div>
-        {breeds.map((breed: Breed) => (
-          <ul>
-            <ListItem key={breed.id}>
-              <div>
-                <h2 className="text-xl font-semibold">
-                  {breed.attributes?.name}
-                </h2>
-                <p className="text-gray-800">{breed.attributes?.description}</p>
-              </div>
-            </ListItem>
-          </ul>
-        ))}
-      </div>
-    </InfiniteList>
+      threshold={0}
+      className="gap-16"
+      elements={breeds.map((breed: Breed) => (
+        <li key={breed.id}>
+          <ListItem key={breed.id} className="bg-red-400">
+            <div>
+              <h2 className="text-xl font-semibold">
+                {breed.attributes?.name}
+              </h2>
+              <p className="text-gray-800">{breed.attributes?.description}</p>
+            </div>
+          </ListItem>
+        </li>
+      ))}
+    ></InfiniteList>
   );
 }

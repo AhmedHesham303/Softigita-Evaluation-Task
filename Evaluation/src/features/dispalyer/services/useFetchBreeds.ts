@@ -14,13 +14,13 @@ export const useFetchBreeds = ({
 }: fetchBreedsProps) => {
   const [breeds, setBreeds] = useState<Breed[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null | boolean>(null);
+  const [error, setError] = useState<Error | null | undefined>(null);
   const [hasMore, setHasMore] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        setError(false);
+        setError(undefined);
         const paginatedUrl = addPaginationToUrl({
           url,
           page: String(page),
@@ -38,8 +38,8 @@ export const useFetchBreeds = ({
           }
           return newData;
         });
-      } catch {
-        setError(true);
+      } catch (err) {
+        setError(err as Error);
         setHasMore(false);
       } finally {
         setIsLoading(false);
