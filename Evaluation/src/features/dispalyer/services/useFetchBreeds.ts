@@ -14,7 +14,7 @@ export const useFetchBreeds = ({
 }: fetchBreedsProps) => {
   const [breeds, setBreeds] = useState<Breed[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null | undefined>(null);
+  const [error, setError] = useState<Error | null | undefined | unknown>(null);
   const [hasMore, setHasMore] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
@@ -38,8 +38,8 @@ export const useFetchBreeds = ({
           }
           return newData;
         });
-      } catch (err) {
-        setError(err as Error);
+      } catch (err: unknown) {
+        setError(err);
         setHasMore(false);
       } finally {
         setIsLoading(false);

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 type InfiniteListProps = {
   threshold?: number;
   isLoading?: boolean;
-  error?: Error | null;
+  error?: Error | null | undefined | unknown;
   hasMore?: boolean;
   setPage: (page: number) => void;
   className?: string;
@@ -19,7 +19,7 @@ export default function InfiniteList({
   isLoading = false,
   error,
   hasMore = false,
-  setPage = () => {},
+  setPage,
   outerClassName,
   className,
   elements,
@@ -55,7 +55,6 @@ export default function InfiniteList({
   }, [isSpinnerRefVisible]);
   useEffect(() => {
     if (hasMore && isIntersecting && !isLoading) {
-      // to prevent multiple calls
       setPage((prev) => prev + 1);
     }
   }, [isIntersecting]);
@@ -70,8 +69,8 @@ export default function InfiniteList({
         <div className="my-auto ">
           <Spinner loadingText="Loading initial data" />
         </div>
-      ) : error?.message ? (
-        <div className="text-red-500">Error: {error.message}</div>
+      ) : error ? (
+        <div className="text-red-500">Error</div>
       ) : (
         <ul className={cn("flex flex-col", className)}>{elements}</ul>
       )}
