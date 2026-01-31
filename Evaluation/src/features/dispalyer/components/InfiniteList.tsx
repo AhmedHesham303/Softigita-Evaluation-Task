@@ -1,26 +1,30 @@
 import ListItem from "./ListItem";
-import type { Breed } from "../types/breeds";
 import Spinner from "@/components/common/Spinner";
 import { useEffect, useRef, useState } from "react";
 
-import { useFetchBreeds } from "../services/useFetchBreeds";
 import NoMoreData from "./NoMoreData";
-
+type InfiniteListProps = {
+  threshold?: number;
+  data: [];
+  isLoading?: boolean;
+  error?: Error | null;
+  hasMore?: boolean;
+  setPage: (page: number) => void;
+  children: React.JSX.Element;
+};
 export default function InfiniteList({
   threshold = 0,
-}: {
-  threshold?: number;
-}) {
+  isLoading = false,
+  error,
+  hasMore = false,
+  setPage = () => {},
+  children,
+}: InfiniteListProps) {
   if (threshold < 1) {
     threshold = window.innerHeight * threshold;
   }
   threshold = Math.max(threshold, 16);
   console.log("threshold", threshold);
-  const [page, setPage] = useState(1);
-
-  const { breeds, isLoading, error, hasMore } = useFetchBreeds({
-    page,
-  });
 
   const spinnerRef = useRef<HTMLDivElement>(null);
 
@@ -60,15 +64,7 @@ export default function InfiniteList({
       ) : error ? (
         <p>!error</p>
       ) : (
-        <div>
-          {
-            <ul className=" flex justify-between items-center flex-col gap-1">
-              {breeds.map((breed: Breed) => (
-                <ListItem key={breed.id} breed={breed} />
-              ))}
-            </ul>
-          }
-        </div>
+        <div>{children}</div>
       )}
       {hasMore ? (
         <div
