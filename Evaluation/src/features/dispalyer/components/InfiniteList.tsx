@@ -14,6 +14,7 @@ export default function InfiniteList({
   if (threshold < 1) {
     threshold = window.innerHeight * threshold;
   }
+  threshold = Math.max(threshold, 16);
   console.log("threshold", threshold);
   const [page, setPage] = useState(1);
 
@@ -34,7 +35,7 @@ export default function InfiniteList({
       {
         root: null,
         rootMargin: "0px",
-        threshold: 1,
+        threshold: 0,
       },
     );
     if (spinnerRef.current) {
@@ -75,9 +76,9 @@ export default function InfiniteList({
             spinnerRef.current = el;
             setIsSpinnerRefVisible((prev) => !prev);
           }}
-          className="flex flex-col justify-center items-center "
+          style={{ marginTop: `${threshold}px` }}
+          className="flex flex-col justify-center items-center  "
         >
-          <div className={`w-2 h-[${threshold}px]`}></div>
           <Spinner loadingText="loading more data" />
         </div>
       ) : (
