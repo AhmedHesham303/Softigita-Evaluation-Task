@@ -16,6 +16,7 @@ export default function BreedsPage() {
       error={error}
       hasMore={hasMore}
       setPage={setPage}
+      page={page}
       threshold={0}
       className="gap-16"
       elements={breeds.map((breed: Breed) => (

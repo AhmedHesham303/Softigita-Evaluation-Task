@@ -1,75 +1,48 @@
-# React + TypeScript + Vite
+🚀 Approach for Infinite Scroll Logic
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+I implemented infinite scrolling using the Intersection Observer API instead of a traditional scroll event listener.
 
-Currently, two official plugins are available:
+Why Intersection Observer?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+I didnt rely on ai to choose intersection observer but instaed i tried to build my own opinion so i read the docs of the intersection observer and why its bettere than evnt handler scrolling the better points where thst :
+complex caluclatuins
+may cause multiple network calls from the callback
 
-## React Compiler
+🧩 Component API Design Decisions
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+While designing the components, I focused on separation of concerns and reusability.
 
-Note: This will impact Vite dev & build performances.
+Key decisions:
 
-## Expanding the ESLint configuration
+build it first in one componnet and created types for only this specifc endpoint then step by step started splitting logic from UI
+by using custome fetch hook and make the list copmont to exept the jsx element and its data thriugh props tthe same for the list item component but passed as childrenn which allowed rendering any type of data
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+⚠️ Challenges Faced
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Some of the main challenges during development included:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Managing difrent loading states(initial,more)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Preventing multiple API calls from firing at the same time.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+the conflict between typing and making it reuasble at the same time
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Correctly typing useRef for DOM elements and handling null safely.
+build the threshold logic and specally for edge cases
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+🌐 Live Demo
+
+🔗 Live Demo:
+https://your-live-demo-link-here
+
+📦 Repository
+
+🔗 GitHub Repository:
+https://github.com/AhmedHesham303/Softigita-Evaluation-Task/tree/main/Evaluation
+
+🛠️ Tech Stack
+
+React
+TypeScript
+Intersection Observer API
+shadcn

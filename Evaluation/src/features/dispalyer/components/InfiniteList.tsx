@@ -9,6 +9,7 @@ type InfiniteListProps = {
   error?: Error | null | undefined | unknown;
   hasMore?: boolean;
   setPage: (page: number) => void;
+  page: number;
   className?: string;
   outerClassName?: string;
   innerClassName?: string;
@@ -20,6 +21,7 @@ export default function InfiniteList({
   error,
   hasMore = false,
   setPage,
+  page,
   outerClassName,
   className,
   elements,
@@ -55,7 +57,7 @@ export default function InfiniteList({
   }, [isSpinnerRefVisible]);
   useEffect(() => {
     if (hasMore && isIntersecting && !isLoading) {
-      setPage((prev) => prev + 1);
+      setPage(page + 1);
     }
   }, [isIntersecting]);
   return (
