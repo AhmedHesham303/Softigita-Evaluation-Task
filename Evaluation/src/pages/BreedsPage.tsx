@@ -20,7 +20,7 @@ export default function BreedsPage() {
       className="gap-16"
       elements={breeds.map((breed: Breed) => (
         <li key={breed.id}>
-          <ListItem key={breed.id} className="bg-red-400">
+          <ListItem key={breed.id}>
             <div>
               <h2 className="text-xl font-semibold">
                 {breed.attributes?.name}
