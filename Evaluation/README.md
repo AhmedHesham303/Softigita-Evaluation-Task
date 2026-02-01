@@ -4,9 +4,12 @@ I implemented infinite scrolling using the Intersection Observer API instead of 
 
 Why Intersection Observer?
 
-I didnt rely on ai to choose intersection observer but instaed i tried to build my own opinion so i read the docs of the intersection observer and why its bettere than evnt handler scrolling the better points where thst :
-complex caluclatuins
-may cause multiple network calls from the callback
+I didn’t rely on AI to choose the Intersection Observer. Instead, I tried to build my own opinion by reading the official documentation and understanding why it is better than scroll event handlers.
+The main issues with scroll event handling were:
+
+Complex calculations
+
+Possibility of triggering multiple network calls from the callback
 
 🧩 Component API Design Decisions
 
@@ -14,26 +17,34 @@ While designing the components, I focused on separation of concerns and reusabil
 
 Key decisions:
 
-build it first in one componnet and created types for only this specifc endpoint then step by step started splitting logic from UI
-by using custome fetch hook and make the list copmont to exept the jsx element and its data thriugh props tthe same for the list item component but passed as childrenn which allowed rendering any type of data
+I first built everything in a single component and created types for only this specific endpoint.
+
+Step by step, I started splitting logic from UI.
+
+I introduced a custom fetch hook.
+
+I designed the list component to accept the JSX element and its data through props.
+
+The same approach was applied to the list item component, but it was passed as children, which allowed rendering any type of data.
 
 ⚠️ Challenges Faced
 
 Some of the main challenges during development included:
 
-Managing difrent loading states(initial,more)
+Managing different loading states (initial load, load more).
 
 Preventing multiple API calls from firing at the same time.
 
-the conflict between typing and making it reuasble at the same time
+Handling the conflict between strong typing and making components reusable.
 
-Correctly typing useRef for DOM elements and handling null safely.
-build the threshold logic and specally for edge cases
+Correctly typing useRef for DOM elements and safely handling null.
+
+Building the threshold logic, especially for edge cases.
 
 🌐 Live Demo
 
 🔗 Live Demo:
-https://your-live-demo-link-here
+https://github.com/AhmedHesham303/Softigita-Evaluation-Task/tree/main/Evaluation
 
 📦 Repository
 
